@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.izpan.common.constants.SystemCacheConstant;
+import com.izpan.common.exception.BizException;
 import com.izpan.common.pool.StringPools;
 import com.izpan.common.util.CglibUtil;
 import com.izpan.infrastructure.enums.MenuTypeEnum;
@@ -65,8 +66,15 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     @Override
     public boolean batchDeleteMenu(List<Long> menuIds) {
-        // 删除角色缓存
-        menuIds.forEach(sysRoleMenuService::deleteRoleMenuCacheWithMenuId);
+        menuIds.forEach(menuId -> {
+            List<Long> roleIds = sysRoleMenuService.queryRoleIdsWithMenuId(menuId);
+            if (!CollectionUtils.isEmpty(roleIds)) {
+                SysMenu byId = super.getById(menuId);
+                throw new BizException("菜单[%s]已被授权角色权限,不允许被删除,请撤销后再进行操作删除".formatted(byId.getName()));
+            }
+            // 删除角色缓存
+            sysRoleMenuService.deleteRoleMenuCacheWithMenuId(menuId);
+        });
         // 删除权限按钮数据
         sysPermissionService.deletePermissionWithMenuIds(menuIds);
         // 删除菜单

@@ -61,6 +61,16 @@ public interface ISysRoleMenuService extends IService<SysRoleMenu> {
     List<Long> queryMenuIdsWithRoleId(Long roleId);
 
     /**
+     * 根据菜单 ID 获取角色 ID 集合
+     *
+     * @param menuId 菜单 ID
+     * @return {@link List }<{@link Long }> 角色 ID 集合
+     * @author payne.zhuang
+     * @CreateTime 2025-04-03 - 10:21:30
+     */
+    List<Long> queryRoleIdsWithMenuId(Long menuId);
+
+    /**
      * 根据角色ID查询菜单列表
      *
      * @param roleId 角色ID

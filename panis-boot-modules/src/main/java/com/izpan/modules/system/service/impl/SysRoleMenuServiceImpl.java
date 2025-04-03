@@ -31,6 +31,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -116,13 +118,32 @@ public class SysRoleMenuServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRo
 
     @Override
     public List<Long> queryMenuIdsWithRoleId(Long roleId) {
-        if (ObjectUtils.isEmpty(roleId)) {
+        return queryIdsByField(roleId, SysRoleMenu::getMenuId, queryWrapper -> queryWrapper.eq(SysRoleMenu::getRoleId, roleId));
+    }
+
+    @Override
+    public List<Long> queryRoleIdsWithMenuId(Long menuId) {
+        return queryIdsByField(menuId, SysRoleMenu::getRoleId, queryWrapper -> queryWrapper.eq(SysRoleMenu::getMenuId, menuId));
+    }
+
+    /**
+     * 根据指定字段查询 ID 集合
+     *
+     * @param id                   查询条件 ID
+     * @param fieldGetter          获取字段的方法引用
+     * @param queryWrapperConsumer 查询条件的 Consumer
+     * @return {@link List }<{@link Long }> 查询结果的 ID 集合
+     * @author payne.zhuang
+     * @CreateTime 2025-04-03 - 10:27:01
+     */
+    private List<Long> queryIdsByField(Long id, Function<SysRoleMenu, Long> fieldGetter, Consumer<LambdaQueryWrapper<SysRoleMenu>> queryWrapperConsumer) {
+        if (ObjectUtils.isEmpty(id)) {
             return Collections.emptyList();
         }
-        LambdaQueryWrapper<SysRoleMenu> inQueryWrapper = new LambdaQueryWrapper<SysRoleMenu>()
-                .eq(SysRoleMenu::getRoleId, roleId);
-        List<SysRoleMenu> sysRoleMenus = baseMapper.selectList(inQueryWrapper);
-        return sysRoleMenus.stream().map(SysRoleMenu::getMenuId).toList();
+        LambdaQueryWrapper<SysRoleMenu> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapperConsumer.accept(queryWrapper);
+        List<SysRoleMenu> sysRoleMenus = baseMapper.selectList(queryWrapper);
+        return sysRoleMenus.stream().map(fieldGetter).toList();
     }
 
     @Override
