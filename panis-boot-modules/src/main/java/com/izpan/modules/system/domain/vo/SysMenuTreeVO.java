@@ -23,12 +23,12 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Schema(name = "SysMenuPageVO", description = "菜单管理列表 VO 对象")
 public class SysMenuTreeVO extends SysMenuVO {
 
     @Serial
     private static final long serialVersionUID = -6337922157556940336L;
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<SysMenuTreeVO> children;
 }
