@@ -95,7 +95,7 @@ public class MonFileController {
     @PostMapping("/upload")
     @SaCheckPermission("mon:file:upload")
     @Operation(operationId = "6", summary = "上传文件")
-    public Result<Boolean> batchDelete(@Parameter(description = "文件对象") @RequestParam("file") MultipartFile file) {
+    public Result<Boolean> putFile(@Parameter(description = "文件对象") @RequestParam("file") MultipartFile file) {
         return Result.status(monFileFacade.putFile(file));
     }
 
