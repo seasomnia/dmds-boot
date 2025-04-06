@@ -109,4 +109,12 @@ public interface ISysDictItemFacade {
      */
     Map<String, List<SysDictItemOptionsVO>> queryDictItemMapOptions(SysDictItemStoreSearchDTO searchDTO);
 
+    /**
+     * 加载字典项到缓存
+     *
+     * @author payne.zhuang
+     * @CreateTime 2025-04-05 - 18:35:15
+     */
+    void loadDictItemToCache();
+
 }

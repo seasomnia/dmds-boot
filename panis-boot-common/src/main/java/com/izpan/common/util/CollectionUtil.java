@@ -3,10 +3,7 @@ package com.izpan.common.util;
 import com.google.common.collect.Sets;
 import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -71,5 +68,42 @@ public class CollectionUtil extends org.springframework.util.CollectionUtils {
      */
     public static <T> List<T> toMutableList(Stream<T> stream) {
         return stream.collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    /**
+     * 集合类型转换工具方法
+     *
+     * @param collection  原始集合
+     * @param targetClass 目标类型
+     * @param <T>         目标类型泛型
+     * @return 转换后的集合
+     * @author payne.zhuang
+     * @CreateTime 2025-04-05 20:44:14
+     */
+    public static <T> List<T> toList(Collection<?> collection, Class<T> targetClass) {
+        if (null == collection || collection.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return toMutableList(collection.stream()
+                .filter(Objects::nonNull)
+                .map(item -> {
+                    if (targetClass.isInstance(item)) {
+                        return targetClass.cast(item);
+                    } else if (item instanceof Number number && Number.class.isAssignableFrom(targetClass)) {
+                        // 数值类型转换处理
+                        if (targetClass == Long.class) {
+                            return targetClass.cast(number.longValue());
+                        } else if (targetClass == Integer.class) {
+                            return targetClass.cast(number.intValue());
+                        } else if (targetClass == Double.class) {
+                            return targetClass.cast(number.doubleValue());
+                        }
+                        // 可以扩展其他数值类型
+                    }
+                    // 字符串转换处理
+                    return targetClass.cast(item.toString());
+                }));
+
     }
 }

@@ -97,8 +97,7 @@ public class SysDictFacadeImpl implements ISysDictFacade {
     @Override
     @Transactional
     public boolean batchDelete(SysDictDeleteDTO sysDictDeleteDTO) {
-        SysDictBO sysDictBO = CglibUtil.convertObj(sysDictDeleteDTO, SysDictBO::new);
-        return sysDictService.removeBatchByIds(sysDictBO.getIds(), true);
+        return sysDictService.removeBatchByIds(sysDictDeleteDTO.getIds(), true);
     }
 
     @Override

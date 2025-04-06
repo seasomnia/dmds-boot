@@ -20,6 +20,7 @@
 package com.izpan.modules.system.facade.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.izpan.common.pool.StringPools;
 import com.izpan.common.util.CglibUtil;
 import com.izpan.infrastructure.page.PageQuery;
 import com.izpan.infrastructure.page.RPage;
@@ -86,8 +87,7 @@ public class SysDictItemFacadeImpl implements ISysDictItemFacade {
     @Override
     @Transactional
     public boolean batchDelete(SysDictItemDeleteDTO sysDictItemDeleteDTO) {
-        SysDictItemBO sysDictItemBO = CglibUtil.convertObj(sysDictItemDeleteDTO, SysDictItemBO::new);
-        return sysDictItemService.removeBatchByIds(sysDictItemBO.getIds(), true);
+        return sysDictItemService.removeBatchByIds(sysDictItemDeleteDTO.getIds(), true);
     }
 
     @Override
@@ -111,4 +111,8 @@ public class SysDictItemFacadeImpl implements ISysDictItemFacade {
                 ));
     }
 
+    @Override
+    public void loadDictItemToCache() {
+        sysDictItemService.loadDictItemToCache(StringPools.EMPTY);
+    }
 }

@@ -89,4 +89,13 @@ public interface ISysDictItemService extends IService<SysDictItem> {
      * @CreateTime 2024-09-03 - 14:08:41
      */
     List<SysDictItemOptions> transformSysDictItemOptions(List<SysDictItem> sysDictItems);
+
+    /**
+     * 加载字典项到缓存
+     *
+     * @param dictCode 字典编码
+     * @author payne.zhuang
+     * @CreateTime 2025-04-05 - 18:35:35
+     */
+    void loadDictItemToCache(String dictCode);
 }

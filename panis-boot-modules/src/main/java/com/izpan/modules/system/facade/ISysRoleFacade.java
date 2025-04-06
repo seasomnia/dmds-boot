@@ -7,6 +7,7 @@ import com.izpan.modules.system.domain.dto.role.SysRoleAddDTO;
 import com.izpan.modules.system.domain.dto.role.SysRoleDeleteDTO;
 import com.izpan.modules.system.domain.dto.role.SysRoleSearchDTO;
 import com.izpan.modules.system.domain.dto.role.SysRoleUpdateDTO;
+import com.izpan.modules.system.domain.vo.SysRoleExportVO;
 import com.izpan.modules.system.domain.vo.SysRoleVO;
 
 import java.util.List;
@@ -81,4 +82,13 @@ public interface ISysRoleFacade {
      * @CreateTime 2024-04-06 18:57
      */
     List<Options<Long>> queryAllRoleListConvertOptions();
+
+    /**
+     * 获取所有角色信息集合
+     *
+     * @return {@link List }<{@link SysRoleExportVO }> 角色集合
+     * @author payne.zhuang
+     * @CreateTime 2025-04-05 - 12:28:51
+     */
+    List<SysRoleExportVO> queryAllExportRoleList();
 }

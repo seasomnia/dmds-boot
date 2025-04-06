@@ -133,6 +133,23 @@ public class SystemCacheConstant implements Serializable {
 
     // ====================== 角色权限 End ======================
 
+    // ====================== 数据字典 Begin ======================
+
+    public static final String SYSTEM_DICT_ITEM = "system:dict:item";
+
+    /**
+     * 数据字典 Item 缓存 Key
+     *
+     * @return {@link String } system:dict:item:dictCode
+     * @author payne.zhuang
+     * @CreateTime 2025-04-05 16:48:26
+     */
+    public static String dictItemKey(String dictCode) {
+        return SYSTEM_DICT_ITEM + StringPools.DOUBLE_COLON + dictCode;
+    }
+
+    // ====================== 数据字典 End ======================
+
     // ====================== Controller 注解 Begin ======================
 
     private static final String ANNOTATION = "annotation";

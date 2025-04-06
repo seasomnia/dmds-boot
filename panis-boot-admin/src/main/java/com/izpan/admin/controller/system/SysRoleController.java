@@ -5,19 +5,27 @@ import com.izpan.common.api.Result;
 import com.izpan.common.domain.Options;
 import com.izpan.infrastructure.page.PageQuery;
 import com.izpan.infrastructure.page.RPage;
+import com.izpan.infrastructure.util.GsonUtil;
 import com.izpan.modules.system.domain.dto.role.SysRoleAddDTO;
 import com.izpan.modules.system.domain.dto.role.SysRoleDeleteDTO;
 import com.izpan.modules.system.domain.dto.role.SysRoleSearchDTO;
 import com.izpan.modules.system.domain.dto.role.SysRoleUpdateDTO;
+import com.izpan.modules.system.domain.vo.SysRoleExportVO;
 import com.izpan.modules.system.domain.vo.SysRoleVO;
 import com.izpan.modules.system.facade.ISysRoleFacade;
+import com.izpan.starter.excel.listener.DataListener;
+import com.izpan.starter.excel.util.ExcelUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -29,6 +37,8 @@ import java.util.List;
  * @ClassName com.izpan.admin.controller.system.SysRoleController
  * @CreateTime 2023-07-23
  */
+
+@Slf4j
 @RestController
 @Tag(name = "角色管理")
 @RequiredArgsConstructor
@@ -81,4 +91,25 @@ public class SysRoleController {
         return Result.data(sysRoleFacade.queryAllRoleListConvertOptions());
     }
 
+    @PostMapping("/export")
+    @SaCheckPermission("sys:role:export")
+    @Operation(operationId = "7", summary = "导出角色管理信息")
+    public void export(HttpServletResponse response) {
+        List<SysRoleExportVO> sysRoleExportVOList = sysRoleFacade.queryAllExportRoleList();
+        ExcelUtil.export(SysRoleExportVO.class).data(sysRoleExportVOList).toResponse(response);
+    }
+
+    @SneakyThrows
+    @PostMapping("/import")
+    @SaCheckPermission("sys:role:import")
+    @Operation(operationId = "7", summary = "导入角色管理信息")
+    public Result<List<SysRoleVO>> importData(@Parameter(description = "文件对象") @RequestParam("file") MultipartFile file) {
+        // 创建监听器实例并保存引用
+        DataListener<SysRoleExportVO> listener = new DataListener<>();
+        ExcelUtil.read(SysRoleExportVO.class)
+                .listener(listener)
+                .fromInputStream(file.getInputStream());
+        log.info("导入的数据: {}", GsonUtil.toJson(listener.getRows()));
+        return Result.success();
+    }
 }

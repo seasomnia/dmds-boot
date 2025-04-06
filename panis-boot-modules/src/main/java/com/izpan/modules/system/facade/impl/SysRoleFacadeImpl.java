@@ -11,6 +11,7 @@ import com.izpan.modules.system.domain.dto.role.SysRoleDeleteDTO;
 import com.izpan.modules.system.domain.dto.role.SysRoleSearchDTO;
 import com.izpan.modules.system.domain.dto.role.SysRoleUpdateDTO;
 import com.izpan.modules.system.domain.entity.SysRole;
+import com.izpan.modules.system.domain.vo.SysRoleExportVO;
 import com.izpan.modules.system.domain.vo.SysRoleVO;
 import com.izpan.modules.system.facade.ISysRoleFacade;
 import com.izpan.modules.system.service.ISysRoleService;
@@ -80,5 +81,11 @@ public class SysRoleFacadeImpl implements ISysRoleFacade {
                         .value(item.getId())
                         .build())
                 .toList();
+    }
+
+    @Override
+    public List<SysRoleExportVO> queryAllExportRoleList() {
+        List<SysRoleBO> allRole = sysRoleService.queryAllRoleList();
+        return CglibUtil.convertList(allRole, SysRoleExportVO::new);
     }
 }

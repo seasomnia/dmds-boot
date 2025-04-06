@@ -23,22 +23,25 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Maps;
+import com.izpan.common.constants.SystemCacheConstant;
+import com.izpan.common.domain.DictItem;
 import com.izpan.common.exception.BizException;
 import com.izpan.common.pool.StringPools;
+import com.izpan.common.util.CglibUtil;
 import com.izpan.common.util.CollectionUtil;
 import com.izpan.infrastructure.holder.ContextHolder;
 import com.izpan.infrastructure.page.PageQuery;
+import com.izpan.infrastructure.util.RedisUtil;
 import com.izpan.modules.system.domain.bo.SysDictItemBO;
 import com.izpan.modules.system.domain.bo.SysDictItemOptions;
 import com.izpan.modules.system.domain.entity.SysDictItem;
 import com.izpan.modules.system.repository.mapper.SysDictItemMapper;
 import com.izpan.modules.system.service.ISysDictItemService;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -75,7 +78,31 @@ public class SysDictItemServiceImpl extends ServiceImpl<SysDictItemMapper, SysDi
         if (count > 0) {
             throw new BizException("字典[%s],[%s]已存在".formatted(entity.getDictCode(), entity.getValue()));
         }
-        return super.save(entity);
+        boolean save = super.save(entity);
+        if (save) loadDictItemToCache(entity.getDictCode());
+        return save;
+    }
+
+    @Override
+    public boolean updateById(SysDictItem entity) {
+        SysDictItem byId = super.getById(entity.getId());
+        boolean updateById = super.updateById(entity);
+        if (updateById) loadDictItemToCache(byId.getDictCode());
+        return updateById;
+    }
+
+    @Override
+    public boolean removeBatchByIds(Collection<?> list, boolean useFill) {
+        List<Long> ids = CollectionUtil.toList(list, Long.class);
+        List<SysDictItem> sysDictItems = baseMapper.selectBatchIds(ids);
+        boolean removed = super.removeBatchByIds(list, useFill);
+        if (removed) {
+            Set<String> keys = sysDictItems.stream()
+                    .map(item -> SystemCacheConstant.dictItemKey(item.getDictCode()))
+                    .collect(Collectors.toSet());
+            RedisUtil.del(keys);
+        }
+        return removed;
     }
 
     @Override
@@ -129,6 +156,31 @@ public class SysDictItemServiceImpl extends ServiceImpl<SysDictItemMapper, SysDi
                         .sort(item.getSort())
                         .type(item.getType())
                         .build()));
+    }
+
+    @Override
+    public void loadDictItemToCache(String dictCode) {
+        LambdaQueryWrapper<SysDictItem> lambdaQueryWrapper = new LambdaQueryWrapper<SysDictItem>()
+                .eq(StringUtils.isNotBlank(dictCode), SysDictItem::getDictCode, dictCode);
+        List<SysDictItem> sysDictItems = baseMapper.selectList(lambdaQueryWrapper);
+        // 按字典编码分组并排序，直接构建用于批量存储的 Map
+        Map<String, Object> dictCacheMap = sysDictItems.stream()
+                .collect(Collectors.groupingBy(
+                        item -> SystemCacheConstant.dictItemKey(item.getDictCode()),
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                items -> {
+                                    // 对每组字典项进行排序
+                                    items.sort(Comparator.comparing(SysDictItem::getSort));
+                                    return CglibUtil.convertList(items, DictItem::new);
+                                }
+                        )
+                ));
+
+        // 批量存入缓存
+        if (!dictCacheMap.isEmpty()) {
+            RedisUtil.multiSet(dictCacheMap);
+        }
     }
 }
 

@@ -23,6 +23,7 @@ import com.izpan.admin.annotation.AnnotationExtractor;
 import com.izpan.common.constants.SystemCacheConstant;
 import com.izpan.common.pool.StringPools;
 import com.izpan.infrastructure.util.RedisUtil;
+import com.izpan.modules.system.facade.ISysDictItemFacade;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.env.Environment;
@@ -46,8 +47,11 @@ public class StartEventRunner implements CommandLineRunner {
 
     private final Environment environment;
 
-    public StartEventRunner(Environment environment) {
+    private final ISysDictItemFacade sysDictItemFacade;
+
+    public StartEventRunner(Environment environment, ISysDictItemFacade sysDictItemFacade) {
         this.environment = environment;
+        this.sysDictItemFacade = sysDictItemFacade;
     }
 
     @Override
@@ -61,5 +65,10 @@ public class StartEventRunner implements CommandLineRunner {
             RedisUtil.set(permissionKey, allControllerAnnotations);
             log.info("提取权限注解 Controller(@SaCheckPermission) 完成，共计耗时：{}ms", System.currentTimeMillis() - currentTimeMillis);
         }
+
+        long loadDictItemStartTime = System.currentTimeMillis();
+        // 加载数据字典数据
+        sysDictItemFacade.loadDictItemToCache();
+        log.info("加载数据字典数据完成，共计耗时：{}ms", System.currentTimeMillis() - loadDictItemStartTime);
     }
 }

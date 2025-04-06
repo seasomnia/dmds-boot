@@ -28,7 +28,12 @@ import java.util.stream.Collectors;
 public class RedisUtil {
 
     private static final RedisTemplate redisTemplate;
-    private static final String DEL_LOG = "[Redis][String]删除缓存:{},{}";
+    // 统一定义日志模板常量
+    private static final String DEL_STRING_LOG = "[Redis][String] 删除缓存:{} {}";
+    private static final String DEL_MAP_LOG = "[Redis][Map] 删除缓存:{} {}";
+    private static final String DEL_SET_LOG = "[Redis][Set] 删除缓存:{} {}";
+    private static final String DEL_LIST_LOG = "[Redis][List] 删除缓存:{} {}";
+    private static final String UPDATE_LIST_LOG = "[Redis][List] 修改缓存:{} {}";
 
     static {
         redisTemplate = SpringUtil.getBean("redisTemplate");
@@ -49,6 +54,19 @@ public class RedisUtil {
     public static void set(String key, Object value) {
         try {
             redisTemplate.opsForValue().set(key, value);
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 普通缓存批量放入
+     *
+     * @param keyAndValue 键值对
+     */
+    public static void multiSet(Map<String, Object> keyAndValue) {
+        try {
+            redisTemplate.opsForValue().multiSetIfAbsent(keyAndValue);
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage(), e);
         }
@@ -116,8 +134,7 @@ public class RedisUtil {
      */
     public static Long getExpire(String key) {
         try {
-            Long expire = redisTemplate.getExpire(key, TimeUnit.SECONDS);
-            return expire != null ? expire : 0;
+            return redisTemplate.getExpire(key, TimeUnit.SECONDS);
         } catch (Exception e) {
             log.error("[Redis][String]获取缓存剩余过期时间异常:{}", e.getMessage(), e);
         }
@@ -166,15 +183,15 @@ public class RedisUtil {
      * @param keys 可以传一个值 或多个
      */
     public static void del(String... keys) {
-        if (keys != null && keys.length > 0) {
-            if (keys.length == 1) {
-                Boolean delete = redisTemplate.delete(keys[0]);
-                log.info(DEL_LOG, delete, keys[0]);
-            } else {
-                Long delete = redisTemplate.delete(Arrays.asList(keys));
-                log.info(DEL_LOG, delete, Arrays.toString(keys));
-            }
+        if (keys == null || keys.length == 0) {
+            return;
         }
+
+        String result = keys.length == 1
+                ? String.valueOf(redisTemplate.delete(keys[0]))
+                : String.valueOf(redisTemplate.delete(Arrays.asList(keys)));
+
+        log.info(DEL_STRING_LOG, result, keys.length == 1 ? keys[0] : Arrays.toString(keys));
     }
 
     /**
@@ -184,7 +201,7 @@ public class RedisUtil {
      */
     public static void del(Collection<String> keys) {
         Long delete = redisTemplate.delete(keys);
-        log.info(DEL_LOG, delete, keys);
+        log.info(DEL_LIST_LOG, delete, Arrays.toString(keys.toArray()));
     }
 
     /**
@@ -405,7 +422,7 @@ public class RedisUtil {
     public static void hmDel(String key, Object... item) {
         try {
             Long delete = redisTemplate.opsForHash().delete(key, item);
-            log.error("[Redis][Map]删除缓存:{},{}", delete, Arrays.toString(item));
+            log.info(DEL_MAP_LOG, delete, Arrays.toString(item));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -558,7 +575,7 @@ public class RedisUtil {
     public static Long setRemove(String key, Object... values) {
         try {
             Long count = redisTemplate.opsForSet().remove(key, values);
-            log.error("[Redis][Set]删除缓存:{},{}", count, Arrays.toString(values));
+            log.info(DEL_SET_LOG, count, Arrays.toString(values));
             return count == null ? 0L : count;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -661,7 +678,7 @@ public class RedisUtil {
     public static <T> void lUpdateIndex(String key, long index, T value) {
         try {
             redisTemplate.opsForList().set(key, index, value);
-            log.error("[Redis][List]修改缓存:{},{}", index, value);
+            log.info(UPDATE_LIST_LOG, index, value);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
