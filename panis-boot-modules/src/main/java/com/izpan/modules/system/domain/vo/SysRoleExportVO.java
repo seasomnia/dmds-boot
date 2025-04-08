@@ -24,8 +24,8 @@ import cn.idev.excel.annotation.ExcelProperty;
 import cn.idev.excel.annotation.write.style.ColumnWidth;
 import cn.idev.excel.annotation.write.style.ContentRowHeight;
 import cn.idev.excel.annotation.write.style.HeadRowHeight;
-import com.izpan.infrastructure.annotation.DictField;
-import com.izpan.infrastructure.convert.DictFieldConverter;
+import com.izpan.infrastructure.annotation.DictMapping;
+import com.izpan.infrastructure.convert.ExcelDictConverter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -69,8 +69,8 @@ public class SysRoleExportVO implements Serializable {
     @Schema(description = "排序")
     private Integer sort;
 
-    @DictField("status")
-    @ExcelProperty(value = "启用状态", index = 3, converter = DictFieldConverter.class)
+    @DictMapping("status")
+    @ExcelProperty(value = "启用状态", index = 3, converter = ExcelDictConverter.class)
     @Schema(description = "是否启用(0:禁用,1:启用)")
     private String status;
 

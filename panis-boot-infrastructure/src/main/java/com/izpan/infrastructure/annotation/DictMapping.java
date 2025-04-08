@@ -28,16 +28,15 @@ import java.lang.annotation.Target;
 
 /**
  * 数据字典转换注解
- * 用于Excel导入导出时将代码值与字典文本的转换
  *
  * @Author payne.zhuang <paynezhuang@gmail.com>
  * @ProjectName panis-boot
- * @ClassName com.izpan.infrastructure.annotation.DictField
+ * @ClassName com.izpan.infrastructure.annotation.DictMapping
  * @CreateTime 2025/4/5 - 15:01
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DictField {
+public @interface DictMapping {
 
     /**
      * 字典类型编码

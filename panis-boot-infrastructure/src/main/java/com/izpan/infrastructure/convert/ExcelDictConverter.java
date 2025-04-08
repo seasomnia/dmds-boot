@@ -28,7 +28,7 @@ import cn.idev.excel.metadata.property.ExcelContentProperty;
 import com.izpan.common.constants.SystemCacheConstant;
 import com.izpan.common.domain.DictItem;
 import com.izpan.common.pool.StringPools;
-import com.izpan.infrastructure.annotation.DictField;
+import com.izpan.infrastructure.annotation.DictMapping;
 import com.izpan.infrastructure.holder.ContextHolder;
 import com.izpan.infrastructure.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -46,11 +46,11 @@ import java.util.stream.Collectors;
  *
  * @Author payne.zhuang <paynezhuang@gmail.com>
  * @ProjectName panis-boot
- * @ClassName com.izpan.modules.system.convert.DictFieldConverter
+ * @ClassName com.izpan.modules.system.convert.ExcelDictConverter
  * @CreateTime 2025/4/5 - 15:05
  */
 @Slf4j
-public class DictFieldConverter implements Converter<Object> {
+public class ExcelDictConverter implements Converter<Object> {
 
     /**
      * 指定支持的Excel单元格数据类型
@@ -132,7 +132,7 @@ public class DictFieldConverter implements Converter<Object> {
         }
 
         // 获取字段上的DictField注解
-        DictField annotation = contentProperty.getField().getAnnotation(DictField.class);
+        DictMapping annotation = contentProperty.getField().getAnnotation(DictMapping.class);
         if (null == annotation) {
             // 没有注解则直接返回原值
             return value;
