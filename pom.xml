@@ -47,7 +47,7 @@
         <knife4j.version>4.5.0</knife4j.version>
         <java.jwt.version>4.4.0</java.jwt.version>
         <jsr310.version>2.19.0</jsr310.version>
-        <oshi.version>6.8.1</oshi.version>
+        <oshi.version>6.8.2</oshi.version>
         <ip2region.version>2.7.0</ip2region.version>
         <classgraph.version>4.8.179</classgraph.version>
         <snakeyaml.version>2.4</snakeyaml.version>
