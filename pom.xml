@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.2</version>
+        <version>3.5.0</version>
         <relativePath/>
     </parent>
 
@@ -36,22 +36,22 @@
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <maven.plugin.version>3.13.0</maven.plugin.version>
+        <maven.plugin.version>3.14.0</maven.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- SpringBoot -->
 
         <!-- 其他工具版本 -->
-        <lombok.version>1.18.34</lombok.version>
+        <lombok.version>1.18.38</lombok.version>
         <knife4j.version>4.5.0</knife4j.version>
         <java.jwt.version>4.4.0</java.jwt.version>
-        <jsr310.version>2.17.1</jsr310.version>
-        <oshi.version>6.6.1</oshi.version>
+        <jsr310.version>2.19.0</jsr310.version>
+        <oshi.version>6.8.1</oshi.version>
         <ip2region.version>2.7.0</ip2region.version>
-        <classgraph.version>4.8.177</classgraph.version>
-        <snakeyaml.version>2.3</snakeyaml.version>
-        <minio.version>8.5.13</minio.version>
+        <classgraph.version>4.8.179</classgraph.version>
+        <snakeyaml.version>2.4</snakeyaml.version>
+        <minio.version>8.5.17</minio.version>
     </properties>
 
     <dependencyManagement>
@@ -223,6 +223,17 @@
                         <arg>-J--add-opens java.base/jdk.internal.misc=ALL-UNNAMED</arg>
                         <arg>-J-Dio.netty.tryReflectionSetAccessible=true</arg>
                     </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.18.0</version>
+                <configuration>
+                    <!-- 只检查直接依赖，不检查传递依赖 -->
+                    <processDependencies>true</processDependencies>
+                    <processDependencyManagement>false</processDependencyManagement>
+                    <processPlugins>false</processPlugins>
                 </configuration>
             </plugin>
         </plugins>

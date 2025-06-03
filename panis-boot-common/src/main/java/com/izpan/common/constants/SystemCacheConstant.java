@@ -169,4 +169,21 @@ public class SystemCacheConstant implements Serializable {
 
     // ====================== Controller 注解 End ======================
 
+    // ====================== 数据权限 注解 Begin ======================
+
+    public static final String SYSTEM_DATA_SCOPE = SYSTEM + ":data:scope";
+
+    /**
+     * 数据权限缓存 Key
+     *
+     * @return {@link String } system:data:scope:permissionCode
+     * @author payne.zhuang
+     * @CreateTime 2025-05-12 15:14:45
+     */
+    public static String dataScopeKey(String permissionCode) {
+        return SYSTEM_DATA_SCOPE + StringPools.DOUBLE_COLON + permissionCode;
+    }
+
+    // ====================== 数据权限 注解 End ======================
+
 }

@@ -2,6 +2,7 @@ package com.izpan.modules.system.facade.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.collect.Lists;
+import com.izpan.common.domain.KVPairs;
 import com.izpan.common.util.CglibUtil;
 import com.izpan.infrastructure.enums.MenuTypeEnum;
 import com.izpan.infrastructure.page.PageQuery;
@@ -93,7 +94,7 @@ public class SysMenuFacadeImpl implements ISysMenuFacade {
     public SysMenuEditVO get(Long id) {
         SysMenu byId = sysMenuService.getById(id);
         SysMenuEditVO sysMenuEditVO = CglibUtil.convertObj(byId, SysMenuEditVO::new);
-        sysMenuEditVO.setQuery(GsonUtil.fromJsonList(byId.getQuery()));
+        sysMenuEditVO.setQuery(GsonUtil.fromJsonList(byId.getQuery(), KVPairs.class));
         return sysMenuEditVO;
     }
 

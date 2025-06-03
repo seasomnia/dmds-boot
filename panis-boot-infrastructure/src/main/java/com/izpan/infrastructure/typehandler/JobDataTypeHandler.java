@@ -35,16 +35,16 @@ public class JobDataTypeHandler extends BaseTypeHandler<List<KVPairs>> {
     @SneakyThrows
     @Override
     public List<KVPairs> getNullableResult(ResultSet rs, String columnName) {
-        return GsonUtil.fromJsonList(rs.getString(columnName));
+        return GsonUtil.fromJsonList(rs.getString(columnName), KVPairs.class);
     }
 
     @Override
     public List<KVPairs> getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-        return GsonUtil.fromJsonList(rs.getString(columnIndex));
+        return GsonUtil.fromJsonList(rs.getString(columnIndex), KVPairs.class);
     }
 
     @Override
     public List<KVPairs> getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-        return GsonUtil.fromJsonList(cs.getString(columnIndex));
+        return GsonUtil.fromJsonList(cs.getString(columnIndex), KVPairs.class);
     }
 }

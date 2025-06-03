@@ -60,6 +60,6 @@ public class GlobalRequestInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, Exception ex) {
         // 请求的整个流程处理完成后进行拦截逻辑的处理
-        ContextHolder.removeLanguage();
+        ContextHolder.clearLanguage();
     }
 }

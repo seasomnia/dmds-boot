@@ -77,7 +77,7 @@ public class SysDictServiceImpl extends ServiceImpl<SysDictMapper, SysDict> impl
     @Override
     public boolean removeBatchByIds(Collection<?> list, boolean useFill) {
         List<Long> ids = CollectionUtil.toList(list, Long.class);
-        List<SysDict> sysDictList = baseMapper.selectBatchIds(ids);
+        List<SysDict> sysDictList = baseMapper.selectByIds(ids);
         boolean removed = super.removeBatchByIds(list, useFill);
         if (removed) {
             Set<String> keys = sysDictList.stream()

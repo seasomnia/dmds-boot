@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 /**
  * 登录用户
@@ -61,11 +61,16 @@ public class LoginUser implements Serializable {
     /**
      * 角色IDs
      */
-    private List<Long> roleIds;
+    private Set<Long> roleIds;
 
     /**
      * 角色Codes
      */
-    private List<String> roleCodes;
+    private Set<String> roleCodes;
+
+    /**
+     * 组织IDs
+     */
+    private Set<Long> orgIds;
 
 }

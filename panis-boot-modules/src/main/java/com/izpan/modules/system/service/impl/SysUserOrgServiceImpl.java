@@ -40,6 +40,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
  * 用户组织/部门/子部门管理 Service 服务接口实现层
@@ -66,9 +67,9 @@ public class SysUserOrgServiceImpl extends ServiceImpl<SysUserOrgMapper, SysUser
     }
 
     @Override
-    public List<Long> queryOrgUnitsIdsWithUserId(Long userId) {
+    public Set<Long> queryOrgUnitsIdsWithUserId(Long userId) {
         List<SysUserOrgBO> sysUserOrgBOList = queryOrgUnitsListWithUserId(userId);
-        return sysUserOrgBOList.stream().map(SysUserOrg::getOrgId).toList();
+        return sysUserOrgBOList.stream().map(SysUserOrg::getOrgId).collect(Collectors.toSet());
     }
 
     @Override
@@ -81,14 +82,14 @@ public class SysUserOrgServiceImpl extends ServiceImpl<SysUserOrgMapper, SysUser
 
     @Override
     public boolean updateUserOrg(Long userId, List<Long> orgIds, List<Long> principalIds) {
-        List<Long> originUserOrgIds = queryOrgUnitsIdsWithUserId(userId);
+        Set<Long> originUserOrgIds = queryOrgUnitsIdsWithUserId(userId);
         // 处理数据
         Set<Long> orgIdSet = Sets.newHashSet(orgIds);
         Set<Long> principalSet = Sets.newHashSet(principalIds);
         // 处理结果
         AtomicBoolean saveResult = new AtomicBoolean(true);
         CollectionUtil.handleDifference(
-                Sets.newHashSet(originUserOrgIds),
+                originUserOrgIds,
                 orgIdSet,
                 // 处理增加和删除的数据
                 (addOrgIdSet, removeOrgIdSet) -> {
@@ -110,6 +111,34 @@ public class SysUserOrgServiceImpl extends ServiceImpl<SysUserOrgMapper, SysUser
         );
         baseMapper.updatePrincipal(userId, principalSet);
         return saveResult.get();
+    }
+
+    @Override
+    public List<Long> getUserOrgIds(Long userId) {
+        return baseMapper.getUserOrgIds(userId);
+    }
+
+    @Override
+    public List<Long> getUserIdsByOrgIds(List<Long> orgIds) {
+        if (orgIds.isEmpty()) {
+            return List.of();
+        }
+        return baseMapper.getUserIdsByOrgIds(orgIds);
+    }
+
+    @Override
+    public List<Long> getPrincipalOrgIds(Long userId) {
+        return baseMapper.getPrincipalOrgIds(userId);
+    }
+
+    @Override
+    public List<Long> getUserIdsByUnitAndChild(Long userId) {
+        return baseMapper.getUserIdsByUnitAndChild(userId);
+    }
+
+    @Override
+    public List<Long> getUserIdsBySelfAndChildWithPrincipal(Long userId) {
+        return baseMapper.getUserIdsBySelfAndChildWithPrincipal(userId);
     }
 
 }

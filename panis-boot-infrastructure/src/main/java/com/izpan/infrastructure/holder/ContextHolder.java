@@ -19,6 +19,8 @@
 
 package com.izpan.infrastructure.holder;
 
+import lombok.experimental.UtilityClass;
+
 /**
  * 上下文持有者
  *
@@ -27,11 +29,9 @@ package com.izpan.infrastructure.holder;
  * @ClassName com.izpan.infrastructure.holder.ContextHolder
  * @CreateTime 2024/8/22 - 09:46
  */
+
+@UtilityClass
 public class ContextHolder {
-
-    private ContextHolder() {
-
-    }
 
     /**
      * 请求语言
@@ -46,7 +46,7 @@ public class ContextHolder {
         REQUEST_LANGUAGE.set(value);
     }
 
-    public static void removeLanguage() {
+    public static void clearLanguage() {
         REQUEST_LANGUAGE.remove();
     }
 }

@@ -1,5 +1,6 @@
 package com.izpan.modules.monitor.aspect;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.hutool.extra.servlet.JakartaServletUtil;
 import com.google.common.collect.Lists;
 import com.izpan.common.constants.RequestConstant;
@@ -7,6 +8,7 @@ import com.izpan.common.exception.BizException;
 import com.izpan.common.util.CglibUtil;
 import com.izpan.common.util.IPUtil;
 import com.izpan.infrastructure.annotation.RepeatSubmit;
+import com.izpan.infrastructure.holder.DataScopeHolder;
 import com.izpan.infrastructure.util.GsonUtil;
 import com.izpan.infrastructure.util.RedisUtil;
 import com.izpan.modules.monitor.domain.dto.logs.exception.MonLogsErrorAddDTO;
@@ -83,6 +85,13 @@ public class OperationLogAspect {
         HttpServletRequest request = Objects.requireNonNull(attributes).getRequest();
         // 获取 请求方法 Method
         String requestMethod = request.getMethod();
+        // 获取方法上的SaCheckPermission注解
+        MethodSignature ms = (MethodSignature) point.getSignature();
+        SaCheckPermission annotation = ms.getMethod().getAnnotation(SaCheckPermission.class);
+        if (annotation != null) {
+            // 设置权限标识，取第一个作为数据权限标识
+            DataScopeHolder.setPermissionCode(annotation.value()[0]);
+        }
         // 如果是 GET 或者 OPTIONS 请求，直接返回
         if ("OPTIONS".equals(requestMethod) || "GET".equals(requestMethod)) {
             return;
@@ -92,7 +101,6 @@ public class OperationLogAspect {
         String requestId = request.getHeader(RequestConstant.REQUEST_ID);
         // 获取请求 URI
         String requestURI = request.getRequestURI();
-        MethodSignature ms = (MethodSignature) point.getSignature();
         // 获取方法上的注解
         Operation operation = ms.getMethod().getDeclaredAnnotation(Operation.class);
         // 获取请求参数
@@ -110,6 +118,7 @@ public class OperationLogAspect {
         // ================= 操作日志 Begin =================
         String ip = JakartaServletUtil.getClientIP(request);
         String params = GsonUtil.toJson(arguments);
+        assert operation != null;
         logsOperationAddDTO.set(MonLogsOperationAddDTO.builder()
                 .requestId(requestId)
                 .requestUri(requestURI)
@@ -205,5 +214,6 @@ public class OperationLogAspect {
     private void remove() {
         logsOperationAddDTO.remove();
         startTime.remove();
+        DataScopeHolder.clearPermissionCode();
     }
 }
