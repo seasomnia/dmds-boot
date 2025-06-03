@@ -1,8 +1,8 @@
 # PanisBoot 后台管理系统
 
-![SpringBoot](https://img.shields.io/badge/Spring%20Boot-3.3-blue.svg)
+![SpringBoot](https://img.shields.io/badge/Spring%20Boot-3.5-blue.svg)
 ![JDK](https://img.shields.io/badge/JDK-21+-blue.svg)
-![Version](https://img.shields.io/badge/Version-1.0.5--SNAPSHOT-blue.svg)
+![Version](https://img.shields.io/badge/Version-1.0.6--SNAPSHOT-blue.svg)
 [![License](https://img.shields.io/badge/License-Apache%20License%202.0-B9D6AF.svg)](./LICENSE)
 <br/>
 [![Author](https://img.shields.io/badge/Author-paynezhuang-green.svg)](https://github.com/paynezhuang)
@@ -21,18 +21,18 @@ Panis: 名为 Pan , is Pan 反过来 `Panis`，同译为：面包。
 
 | 技术           | 说明        | 版本         |
 |:-------------|:----------|:-----------|
-| Spring Boot  | 核心框架      | 3.3.2      |
-| MyBatis-Plus | 持久层框架     | 3.5.6      |
-| MySQL        | 数据库       | 8.0.35     |
+| Spring Boot  | 核心框架      | 3.5.0      |
+| MyBatis-Plus | 持久层框架     | 3.5.8      |
+| MySQL        | 数据库       | 8.4.0      |
 | Redis        | 缓存        | 7.2.3      |
-| Sa-Token     | 鉴权框架      | 1.38.0     |
-| Logback      | 日志管理      | 1.5.6      |
+| Sa-Token     | 鉴权框架      | 1.43.0     |
+| Logback      | 日志管理      | 1.5.18     |
 | Knife4j      | 接口文档      | 4.5.0      |
-| Lombok       | 工具库       | 1.18.34    |
+| Lombok       | 工具库       | 1.18.38    |
 | Jackson      | JSON解析    | 2.15.4     |
-| Gson         | JSON解析    | 2.10.1     |
-| Guava        | Google工具库 | 33.2.1-jre |
-| Hutool       | 工具库       | 5.8.29     |
+| Gson         | JSON解析    | 2.12.1     |
+| Guava        | Google工具库 | 33.4.8-jre |
+| Hutool       | 工具库       | 5.8.38     |
 
 ### 项目源码
 
@@ -120,4 +120,4 @@ PanisBoot
 
 ### 开源协议
 
-项目基于 [Apache License 2.0 © 2024 Zhuang Pan](./LICENSE) 协议，仅供学习参考，商业使用请遵循作者版权信息，作者不保证也不承担任何软件的使用风险。
+项目基于 [Apache License 2.0 © 2025 Zhuang Pan](./LICENSE) 协议，仅供学习参考，商业使用请遵循作者版权信息，作者不保证也不承担任何软件的使用风险。
