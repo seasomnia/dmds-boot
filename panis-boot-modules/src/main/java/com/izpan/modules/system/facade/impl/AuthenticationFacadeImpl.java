@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.google.common.collect.Lists;
 import com.izpan.common.api.ResultCode;
 import com.izpan.common.constants.SystemCacheConstant;
+import com.izpan.common.domain.KVPairs;
 import com.izpan.common.exception.BizException;
 import com.izpan.common.exception.RouteException;
 import com.izpan.common.pool.StringPools;
@@ -82,7 +83,7 @@ public class AuthenticationFacadeImpl implements IAuthenticationFacade {
                     .multiTab(StringPools.Y.equals(menu.getMultiTab()))
                     .fixedIndexInTab(menu.getFixedIndexInTab())
                     .href(menu.getHref())
-                    .query(GsonUtil.fromJsonList(menu.getQuery()))
+                    .query(GsonUtil.fromJsonList(menu.getQuery(), KVPairs.class))
                     .permissions(menuPermissionMap.getOrDefault(menu.getId(), Lists.newArrayList()))
                     .build();
             if (menu.getIconType().equals(StringPools.TWO)) {
@@ -151,7 +152,7 @@ public class AuthenticationFacadeImpl implements IAuthenticationFacade {
     @Cacheable(value = SystemCacheConstant.SYSTEM_USER_ROUTE, key = "#userId")
     public SysUserRouteVO queryUserRouteWithUserId(Long userId) {
         try {
-            List<Long> currentUserRoleIds = GlobalUserHolder.getRoleIds();
+            Set<Long> currentUserRoleIds = GlobalUserHolder.getRoleIds();
             // 获取当前用户的菜单列表以及权限按钮列表
             List<SysMenuBO> sysMenuBOS = Lists.newArrayList();
             currentUserRoleIds.stream()

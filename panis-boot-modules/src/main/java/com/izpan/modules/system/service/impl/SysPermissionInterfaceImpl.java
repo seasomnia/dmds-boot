@@ -44,6 +44,6 @@ public class SysPermissionInterfaceImpl implements StpInterface {
 
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        return GlobalUserHolder.getRoleCodes();
+        return GlobalUserHolder.getRoleCodes().stream().toList();
     }
 }

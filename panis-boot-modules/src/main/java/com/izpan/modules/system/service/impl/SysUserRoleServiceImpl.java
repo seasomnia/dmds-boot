@@ -12,6 +12,7 @@ import com.izpan.modules.system.domain.entity.SysUserRole;
 import com.izpan.modules.system.repository.mapper.SysUserRoleMapper;
 import com.izpan.modules.system.service.ISysRoleService;
 import com.izpan.modules.system.service.ISysUserRoleService;
+import com.izpan.modules.system.util.DataScopeCacheManager;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,8 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUs
 
     @NonNull
     private ISysRoleService sysRoleService;
+    
+    private final DataScopeCacheManager dataScopeCacheManager;
 
     @Override
     public IPage<SysUserRole> listSysUserRolePage(PageQuery pageQuery, SysUserRoleBO sysUserRoleBO) {
@@ -80,6 +83,29 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUs
                     }
                 }
         );
+        
+        // 用户角色关系变更，异步清理该用户的数据权限缓存
+        if (saveResult.get()) {
+            dataScopeCacheManager.invalidateUserCacheAsync(this, userId, "用户角色关系变更");
+        }
+        
         return saveResult.get();
+    }
+
+    @Override
+    public List<Long> listUserIdsByRoleIds(Set<Long> roleIds) {
+        if (roleIds == null || roleIds.isEmpty()) {
+            return List.of();
+        }
+
+        // 查询拥有指定角色的用户ID列表
+        LambdaQueryWrapper<SysUserRole> queryWrapper = new LambdaQueryWrapper<SysUserRole>()
+                .in(SysUserRole::getRoleId, roleIds)
+                .select(SysUserRole::getUserId);
+
+        return baseMapper.selectList(queryWrapper).stream()
+                .map(SysUserRole::getUserId)
+                .distinct() // 去重，因为一个用户可能拥有多个指定的角色
+                .toList();
     }
 }

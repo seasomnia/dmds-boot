@@ -6,7 +6,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.izpan.common.domain.LoginUser;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * 全局用户
@@ -85,22 +85,33 @@ public class GlobalUserHolder {
     /**
      * 获取登录用户角色ID列表
      *
-     * @return {@link List} 角色ID列表
+     * @return {@link Set} 角色ID列表
      * @author payne.zhuang
      * @CreateTime 2024-02-04 22:05
      */
-    public static List<Long> getRoleIds() {
+    public static Set<Long> getRoleIds() {
         return getUser().getRoleIds();
     }
 
     /**
      * 获取登录用户角色Code列表
      *
-     * @return {@link List<String>} 角色Code列表
+     * @return {@link Set<String>} 角色Code列表
      * @author payne.zhuang
      * @CreateTime 2024-04-19 22:39
      */
-    public static List<String> getRoleCodes() {
+    public static Set<String> getRoleCodes() {
         return getUser().getRoleCodes();
+    }
+
+    /**
+     * 获取登录用户组织ID列表
+     *
+     * @return {@link Set} 组织ID列表
+     * @author payne.zhuang
+     * @CreateTime 2025-06-02 23:02:54
+     */
+    public static Set<Long> getOrgIds() {
+        return getUser().getOrgIds();
     }
 }

@@ -16,7 +16,6 @@ import com.izpan.modules.system.repository.mapper.SysMenuMapper;
 import com.izpan.modules.system.service.ISysMenuService;
 import com.izpan.modules.system.service.ISysPermissionService;
 import com.izpan.modules.system.service.ISysRoleMenuService;
-import jakarta.annotation.Resource;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +41,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> implements ISysMenuService {
 
-    @Resource
+    @NonNull
     private ISysRoleMenuService sysRoleMenuService;
 
     @NonNull
@@ -174,7 +173,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
                 .map(SysMenu::getParentId)
                 .filter(id -> !id.equals(0L)).collect(Collectors.toSet());
         if (!CollectionUtils.isEmpty(parentId)) {
-            List<SysMenu> parentMenus = baseMapper.selectBatchIds(parentId);
+            List<SysMenu> parentMenus = baseMapper.selectByIds(parentId);
             sysMenus.addAll(parentMenus);
         }
     }

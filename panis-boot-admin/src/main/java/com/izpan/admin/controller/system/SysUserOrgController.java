@@ -20,6 +20,7 @@
 package com.izpan.admin.controller.system;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaIgnore;
 import com.izpan.common.api.Result;
 import com.izpan.infrastructure.page.PageQuery;
 import com.izpan.infrastructure.page.RPage;
@@ -29,13 +30,17 @@ import com.izpan.modules.system.domain.dto.user.org.SysUserOrgSearchDTO;
 import com.izpan.modules.system.domain.dto.user.org.SysUserOrgUpdateDTO;
 import com.izpan.modules.system.domain.vo.SysUserOrgVO;
 import com.izpan.modules.system.facade.ISysUserOrgFacade;
+import com.izpan.modules.system.service.ISysDataScopeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 /**
  * 用户组织/部门/子部门管理 Controller 控制层
@@ -46,6 +51,7 @@ import org.springframework.web.bind.annotation.*;
  * @CreateTime 2024-07-16 - 16:35:30
  */
 
+@Slf4j
 @RestController
 @Tag(name = "用户组织/部门/子部门管理")
 @RequiredArgsConstructor
@@ -54,6 +60,9 @@ public class SysUserOrgController {
 
     @NonNull
     private ISysUserOrgFacade sysUserOrgFacade;
+
+    @NonNull
+    private ISysDataScopeService sysDataScopeService;
 
     @GetMapping("/page")
     @SaCheckPermission("sys:user:org:page")
@@ -89,6 +98,24 @@ public class SysUserOrgController {
     @Operation(operationId = "5", summary = "批量删除用户组织/部门/子部门管理信息")
     public Result<Boolean> batchDelete(@Parameter(description = "删除对象") @RequestBody SysUserOrgDeleteDTO sysUserOrgDeleteDTO) {
         return Result.status(sysUserOrgFacade.batchDelete(sysUserOrgDeleteDTO));
+    }
+
+    @SaIgnore
+    @GetMapping("/test/{userId}")
+    @SaCheckPermission("sys:user:org:test")
+    @Operation(operationId = "2", summary = "根据ID获取用户组织/部门/子部门管理详细信息")
+    public Result<SysUserOrgVO> test(@Parameter(description = "ID") @PathVariable("userId") Long userId) {
+
+        Set<Long> userIds = sysDataScopeService.getUserIdsByUnitScope(userId);
+        log.info("组织权限: {}", userIds);
+
+        Set<Long> byUnitAndChildUserIds = sysDataScopeService.getUserIdsByUnitAndChildScope(userId);
+        log.info("组织及子部门权限: {}", byUnitAndChildUserIds);
+
+        Set<Long> bySelfAndChildUserIds = sysDataScopeService.getUserIdsBySelfAndChildScope(userId);
+        log.info("本人及子部门权限: {}", bySelfAndChildUserIds);
+
+        return Result.success();
     }
 
 }

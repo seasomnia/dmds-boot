@@ -102,7 +102,7 @@ public class MonSchedulerServiceImpl extends ServiceImpl<MonSchedulerMapper, Mon
 
     @Override
     public boolean batchDeleteMonScheduler(List<Long> ids) {
-        List<MonScheduler> monSchedulers = baseMapper.selectBatchIds(ids);
+        List<MonScheduler> monSchedulers = baseMapper.selectByIds(ids);
         // 进行安全删除
         boolean allDeleted = monSchedulers.stream()
                 .allMatch(item -> schedulerService.delete(new JobKey(item.getJobName(), item.getJobGroup()),

@@ -26,6 +26,7 @@ import com.izpan.modules.system.domain.bo.SysUserOrgBO;
 import com.izpan.modules.system.domain.entity.SysUserOrg;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 用户组织/部门/子部门管理 Service 服务接口层
@@ -63,11 +64,11 @@ public interface ISysUserOrgService extends IService<SysUserOrg> {
      * 查询用户组织id
      *
      * @param userId 用户id
-     * @return {@link List }<{@link Long }> 用户组织id集合
+     * @return {@link Set }<{@link Long }> 用户组织id集合
      * @author payne.zhuang
      * @CreateTime 2024-07-20 - 15:10:55
      */
-    List<Long> queryOrgUnitsIdsWithUserId(Long userId);
+    Set<Long> queryOrgUnitsIdsWithUserId(Long userId);
 
     /**
      * 查询用户组织负责人
@@ -90,5 +91,57 @@ public interface ISysUserOrgService extends IService<SysUserOrg> {
      * @CreateTime 2024-07-20 - 23:19:25
      */
     boolean updateUserOrg(Long userId, List<Long> orgIds, List<Long> principalIds);
+
+    /**
+     * 获取用户组织ID列表
+     *
+     * @param userId 用户ID
+     * @return {@link List }<{@link Long }> 组织ID列表
+     * @author payne.zhuang
+     * @CreateTime 2025-05-29 16:14:56
+     */
+    List<Long> getUserOrgIds(Long userId);
+
+    /**
+     * 根据组织ID列表获取用户ID列表
+     *
+     * @param orgIds 组织ID列表
+     * @return {@link List }<{@link Long }> 用户ID列表
+     * @author payne.zhuang
+     * @CreateTime 2025-05-29 16:15:00
+     */
+    List<Long> getUserIdsByOrgIds(List<Long> orgIds);
+
+    /**
+     * 获取用户担任负责人的组织ID列表
+     *
+     * @param userId 用户ID
+     * @return {@link List }<{@link Long }> 负责组织ID列表
+     * @author payne.zhuang
+     * @CreateTime 2025-05-29 22:57:38
+     */
+    List<Long> getPrincipalOrgIds(Long userId);
+
+    /**
+     * 查询本组织及下级组织用户ID（数据权限专用 - UNIT_AND_CHILD类型）
+     * 本组织用户无需负责人身份，下级组织用户需要负责人身份
+     *
+     * @param userId 用户ID
+     * @return {@link List }<{@link Long }> 用户ID列表
+     * @author payne.zhuang
+     * @CreateTime 2025-05-29 22:57:46
+     */
+    List<Long> getUserIdsByUnitAndChild(Long userId);
+
+    /**
+     * 查询本人及下级组织用户ID（数据权限专用 - SELF_AND_CHILD类型）
+     * 仅限负责人可查看下级组织数据，普通用户只能查看本人数据
+     *
+     * @param userId 用户ID
+     * @return {@link List }<{@link Long }> 用户ID列表
+     * @author payne.zhuang
+     * @CreateTime 2025-05-29 22:57:50
+     */
+    List<Long> getUserIdsBySelfAndChildWithPrincipal(Long userId);
 
 }

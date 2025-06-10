@@ -7,6 +7,7 @@ import com.izpan.modules.system.domain.bo.SysUserRoleBO;
 import com.izpan.modules.system.domain.entity.SysUserRole;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 用户角色管理 Service 服务接口层
@@ -58,4 +59,18 @@ public interface ISysUserRoleService extends IService<SysUserRole> {
      * @CreateTime 2024-04-18 14:52
      */
     boolean updateUserRole(Long userId, List<Long> roleIds);
+
+    /**
+     * 根据角色ID集合查询关联的用户ID列表
+     * <p>
+     * 用于数据权限缓存清理，当角色权限配置变更时，
+     * 需要清理拥有这些角色的所有用户的权限缓存
+     * </p>
+     *
+     * @param roleIds 角色ID集合
+     * @return 用户ID列表
+     * @author payne.zhuang
+     * @CreateTime 2025-06-02 - 23:50:00
+     */
+    List<Long> listUserIdsByRoleIds(Set<Long> roleIds);
 }

@@ -34,6 +34,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 用户管理 Service 服务接口实现层
@@ -79,9 +81,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public boolean addUser(SysUserBO sysUserBO) {
         // 密码盐值
-        sysUserBO.setSalt(RandomStringUtils.randomAlphabetic(6));
+        sysUserBO.setSalt(RandomStringUtils.secureStrong().nextAlphabetic(6));
         // 默认随机12位密码
-        String sha256HexPwd = DigestUtils.sha256Hex(RandomStringUtils.randomAlphabetic(12));
+        String sha256HexPwd = DigestUtils.sha256Hex(RandomStringUtils.secureStrong().nextAlphabetic(12));
         String password = DigestUtils.sha256Hex(sha256HexPwd + sysUserBO.getSalt());
         sysUserBO.setPassword(password);
         return super.save(sysUserBO);
@@ -186,8 +188,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         LoginUser loginUser = CglibUtil.convertObj(sysUser, LoginUser::new);
         // 获取用户角色
         List<SysRoleBO> sysRoleBOS = sysRoleService.queryRoleListWithUserId(sysUser.getId());
-        loginUser.setRoleIds(sysRoleBOS.stream().map(SysRoleBO::getId).toList());
-        loginUser.setRoleCodes(sysRoleBOS.stream().map(SysRoleBO::getRoleCode).toList());
+        loginUser.setRoleIds(sysRoleBOS.stream().map(SysRoleBO::getId).collect(Collectors.toSet()));
+        loginUser.setRoleCodes(sysRoleBOS.stream().map(SysRoleBO::getRoleCode).collect(Collectors.toSet()));
+        Set<Long> userOrgIds = sysUserOrgService.queryOrgUnitsIdsWithUserId(sysUser.getId());
+        loginUser.setOrgIds(userOrgIds);
         // Session 放入用户对象
         StpUtil.getSessionByLoginId(sysUser.getId()).set("user", loginUser);
     }
@@ -212,9 +216,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             throw new BizException("禁止重置《%s》账户密码".formatted(StringPools.ADMIN));
         }
         // 密码盐值
-        sysUser.setSalt(RandomStringUtils.randomAlphabetic(6));
+        sysUser.setSalt(RandomStringUtils.secureStrong().nextAlphabetic(6));
         // 默认随机12位密码
-        String randomPwd = RandomStringUtils.randomAlphabetic(12);
+        String randomPwd = RandomStringUtils.secureStrong().nextAlphabetic(12);
         String sha256HexPwd = DigestUtils.sha256Hex(randomPwd);
         String password = DigestUtils.sha256Hex(sha256HexPwd + sysUser.getSalt());
         sysUser.setPassword(password);

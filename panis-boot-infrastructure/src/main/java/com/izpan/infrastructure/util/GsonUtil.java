@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import com.izpan.infrastructure.gson.adapter.LocalDateTimeTypeAdapter;
 import com.izpan.infrastructure.gson.adapter.StringAdapter;
 
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -61,9 +62,9 @@ public class GsonUtil {
      * @param <T>  目标对象类型
      * @return 对象列表
      */
-    public static <T> List<T> fromJsonList(String json) {
-        return GSON.fromJson(json, new TypeToken<List<T>>() {
-        }.getType());
+    public static <T> List<T> fromJsonList(String json, Class<T> clazz) {
+        Type typeOfList = TypeToken.getParameterized(List.class, clazz).getType();
+        return GSON.fromJson(json, typeOfList);
     }
 
     /**
